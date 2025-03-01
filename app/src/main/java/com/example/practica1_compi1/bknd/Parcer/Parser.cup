@@ -1,0 +1,85 @@
+package com.example.practica1_compi1.bknd.Parcer;
+
+import java_cup.runtime.*;
+import java.lang.Math;
+import com.example.practica1_compi1.bknd.Obj.Texto;
+import com.example.practica1_compi1.bknd.Obj.Header;
+import com.example.practica1_compi1.bknd.Obj.Paragraph;
+import com.example.practica1_compi1.bknd.Obj.TextStyle;
+
+//class Parser;
+
+parser code{:
+
+    public void syntax_error(Symbol token) {
+        System.out.println("Syntax error: " + token.value + " at line " + token.left);
+    }
+
+    public void unrecovered_syntax_error(Symbol token) {
+
+    }
+
+:}
+
+non terminal Texto S,       textDecl, pDef;
+non terminal Lista          listDecl;
+non terminal Header         headersDecl;
+non terminal Paragraph      paragDecl;
+non terminal Lista          textosDecl;
+
+
+terminal                    NUMBER, DECIMAL, LETTER, PLUS, MINUS, DIVIDE, ASTHERISK, POTENCIA, R_PAREN, L_PAREN, NUMERAL,
+                            STRING, BLACKED, ITALIC, BLITALIC, INITLIST, DOT;
+
+
+start with pDef;
+
+
+pDef        ::= paragDecl:p                         {: RESULT = p; :}
+            |   listDecl:ld                         {: RESULT = ld; :}
+            |   error                               {: System.out.println("Error in the paragraph");:}
+            ;
+
+S           ::= headersDecl:h STRING:s              {:  System.out.println("Header: " + h + " String: " + s);
+                                                        h.setContent(s.toString());
+                                                        RESULT = h; :}
+//            |   pDef:p                              {:
+//                                                        RESULT = p; :}
+        ;
+
+headersDecl ::= headersDecl:header NUMERAL          {: header.incrementLevel(); RESULT = header;:}
+            |   NUMERAL                             {: Header h = new Header(); RESULT = h;:}
+//            |   error                               {: System.out.println("Error in the header");:}
+            ;
+
+paragDecl   ::= paragDecl:p textDecl:txt            {: p.addTexto(txt); RESULT = p;:}
+            |   textDecl:txts                       {: Paragraph p = new Paragraph(); p.addTexto(txts); RESULT = p;:}
+            |   paragDecl:p STRING:txt              {: if(p.getTexts() != null){
+                                                            p.addTexto(new Texto(TextStyle.NORMAL.ordinal(), txt.toString()));
+                                                            RESULT = p;
+                                                        } else {
+                                                            Paragraph p2 = new Paragraph();
+                                                            p2.addTexto(new Texto(TextStyle.NORMAL.ordinal(), p.getContent()));
+                                                            p2.addTexto(new Texto(TextStyle.NORMAL.ordinal(), txt.toString()));
+                                                            RESULT = p2;
+                                                        };
+                                                       :}
+
+            |   STRING:s                            {: Paragraph p = new Paragraph(); p.addTexto(new Texto(TextStyle.NORMAL.ordinal(), s.toString())); RESULT = p;:}
+            |   paragDecl:p NUMBER:n                {: p.addTexto(new Texto(TextStyle.NORMAL.ordinal(), n.toString())); RESULT = p;:}
+            |   NUMBER:n DOT                          {: Paragraph p = new Paragraph(n.toString() + ".");  RESULT = p;:}
+            |   NUMBER:n                            {: Paragraph p = new Paragraph(); p.addTexto(new Texto(TextStyle.NORMAL.ordinal(), n.toString())); RESULT = p;:}
+            |   paragDecl:p S:s                    {: p.addTexto(s); RESULT = p;:}
+            |   S:s                                 {: Paragraph p = new Paragraph(); p.addTexto(s); RESULT = p;:}
+            ;
+
+textDecl    ::= BLACKED:bl                          {: Texto t = new Texto(TextStyle.BLACKED.ordinal(), bl.toString() ); RESULT = t;:}
+            |   ITALIC:it                           {: Texto t = new Texto(TextStyle.ITALIC.ordinal(), it.toString() ); RESULT = t;:}
+            |   BLITALIC:bt                         {: Texto t = new Texto(TextStyle.BLITALIC.ordinal(), bt.toString() ); RESULT = t;:}
+            ;
+
+listDecl    ::=  INITLIST:il STRING:st               {: Lista list = new Lista(TextStyle.NUMERED_LIST.ordinal()); list.addTexto(new Texto(TextStyle.ELEMENT_LIST.ordinal(), st.toString() )); RESULT = list;:}
+                         |    PLUS STRING:st                       {: Lista list = new Lista(TextStyle.BULLETED_LIST.ordinal()); list.addTexto(new Texto(TextStyle.ELEMENT_LIST.ordinal(), st.toString() )); RESULT = list;:}
+                         |    listDecl:ld NUMBER:n DOT STRING:st   {: ld.addTexto(new Texto(TextStyle.ELEMENT_LIST.ordinal(), st.toString() )); RESULT = ld;:}
+                         |    listDecl:ld PLUS STRING:st           {: ld.addTexto(new Texto(TextStyle.ELEMENT_LIST.ordinal(), st.toString() )); RESULT = ld;:}
+                         ;
