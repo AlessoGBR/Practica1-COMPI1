@@ -13,5 +13,9 @@ public enum TextStyle {
     BLITALIC,
     MATH,
     PARAGRAPH,
-    UNDERLINED
+    UNDERLINED,
+    PRINT,
+    PLOT,
+    FORMAT,
+    ASSING
 }

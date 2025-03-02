@@ -31,7 +31,7 @@ import com.example.practica1_compi1.bknd.Obj.Paragraph
 import com.example.practica1_compi1.bknd.Obj.TextStyle
 import com.example.practica1_compi1.bknd.Obj.Texto
 import com.example.practica1_compi1.bknd.procesarTexto
-import com.example.practica1_compi1.bknd.TextRespons
+import com.example.practica1_compi1.bknd.procesarCodigo
 
 class notebook : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -214,6 +214,7 @@ class notebook : AppCompatActivity() {
         }
     }
 
+    // aplicando los formatos del texto creado para el cambio en kotlin
     private fun applyTextFormat(resultadoText: TextView, response: Texto) {
         val spannableBuilder = SpannableStringBuilder(resultadoText.text)
         if (response is Header) {
@@ -305,6 +306,7 @@ class notebook : AppCompatActivity() {
                     )
                     spannableBuilder.append(spannable)
                 }
+
                 TextStyle.NORMAL.ordinal -> {
                     spannable.setSpan(
                         StyleSpan(Typeface.NORMAL),
@@ -320,7 +322,7 @@ class notebook : AppCompatActivity() {
         resultadoText.text = spannableBuilder
     }
 
-    //    CAMPO PARA EL CODIGO TIPO PYTON
+    //    CAMPO PARA EL CODIGO
     private fun agregarCampoDinamicoCodigo(container: ViewGroup, hint: String) {
 
         val cardView = CardView(this).apply {
@@ -387,10 +389,7 @@ class notebook : AppCompatActivity() {
         val playButton = crearBoton(android.R.drawable.ic_media_play, "Ejecutar") {
             val contenido = editText.text.toString()
             Toast.makeText(this, "Ejecutando: $contenido", Toast.LENGTH_SHORT).show()
-
-            val resultado = procesarTexto().verTextoKt(contenido)
-
-            resultadoText.text = "Resultado: $resultado"
+            val resultado = procesarCodigo().verTextoKt(contenido)
             resultadoText.visibility = View.VISIBLE
         }
 

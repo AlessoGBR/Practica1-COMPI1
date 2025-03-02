@@ -1,0 +1,86 @@
+package com.example.practica1_compi1.bknd.Parcer.Codigo;
+
+import java_cup.runtime.*;
+import java.lang.Math;
+import com.example.practica1_compi1.bknd.Obj.Expression;
+import com.example.practica1_compi1.bknd.Obj.Asignacion;
+import com.example.practica1_compi1.bknd.Obj.Print;
+import com.example.practica1_compi1.bknd.Obj.Format;
+import com.example.practica1_compi1.bknd.Obj.Operacion;
+import com.example.practica1_compi1.bknd.Obj.Potencia;
+import com.example.practica1_compi1.bknd.Obj.Numero;
+import com.example.practica1_compi1.bknd.Obj.Variable;
+
+//class Parser;
+
+parser code{:
+
+    public void syntax_error(Symbol token) {
+        System.out.println("Syntax error: " + token.value + " at line " + token.left);
+    }
+
+    public void unrecovered_syntax_error(Symbol token) {
+
+    }
+
+:}
+terminal NUMBER, DECIMAL, LETTER, PLUS, MINUS, DIVIDE,
+         ASTHERISK, POTENCIA, R_PAREN, L_PAREN, NUMERAL, ASSING,
+         PRINT, FORMAT;
+
+non terminal Expression     Expr;
+non terminal Term;
+non terminal Potencia       Power;
+non terminal Asignacion     Assign;
+non terminal Print          Print;
+non terminal Plot           Plot;
+non terminal Format         Format;
+non terminal Variable       Variable;
+non terminal Numero         Number;
+non terminal MathExpr;
+
+start with MathExpr;
+
+MathExpr ::= Expr:e {: RESULT = e; :}
+          | Assign:a {: RESULT = a; :}
+          | Print:p {: RESULT = p; :}
+          | Plot:pl {: RESULT = pl; :}
+          | Format:f {: RESULT = f; :}
+          ;
+
+Assign ::= Variable:v ASSING Expr:e {: RESULT = new Asignacion(new Variable(v), new Expression(e)); :}
+         ;
+
+    Print ::= PRINT R_PAREN Expr:e L_PAREN {: RESULT = new Print(new Expression(e)); :}
+            ;
+
+
+    Format ::= FORMAT R_PAREN Expr:e L_PAREN {: RESULT = new Format(new Expression(e)); :}
+             ;
+
+    Expr ::= Expr:e PLUS Term:t {: RESULT = new Operacion(new Expression(e), new Expression(t), "+"); :}
+           | Expr:e MINUS Term:t {: RESULT = new Operacion(new Expression(e), new Expression(t), "-"); :}
+           | Term:t {: RESULT = t; :}
+           ;
+
+    Term ::= Term:t ASTHERISK Power:p {: RESULT = new Operacion(new Expression(t), new Expression(p), "*"); :}
+           | Term:t DIVIDE Power:p {: RESULT = new Operacion(new Expression(t), new Expression(p), "/"); :}
+           | Power:p {: RESULT = p; :}
+           ;
+
+    Power ::= Power:p POTENCIA Variable:v {: RESULT = new Potencia(new Expression(p), new Expression(v)); :}
+            | Power:p POTENCIA Number:n {: RESULT = new Potencia(new Expression(p), new Expression(n)); :}
+            | Variable:v {: RESULT = v; :}
+            | Number:n {: RESULT = n; :}
+            | R_PAREN Expr:e L_PAREN {: RESULT = e; :}
+            ;
+
+    Number ::= NUMBER:n {: RESULT = new Numero(Double.parseDouble(n.toString())); :}
+             | DECIMAL:d {: RESULT = new Numero(Double.parseDouble(d.toString())); :}
+             ;
+
+    Variable ::= LETTER:l {: RESULT = new Variable(l.toString()); :}
+               ;
+
+    MathExpr ::= error {: System.out.println("Error"); :}
+               ;

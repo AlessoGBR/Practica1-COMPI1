@@ -1,8 +1,8 @@
 package com.example.practica1_compi1.bknd;
 
-import com.example.practica1_compi1.bknd.Lexer.Lexer;
+import com.example.practica1_compi1.bknd.Lexer.Texto.Lexer;
 import com.example.practica1_compi1.bknd.Obj.Texto;
-import com.example.practica1_compi1.bknd.Parcer.*;
+import com.example.practica1_compi1.bknd.Parcer.Texto.Parser;
 
 import java.io.BufferedReader;
 

@@ -6,8 +6,8 @@ import com.example.practica1_compi1.bknd.Obj.Texto;
 import com.example.practica1_compi1.bknd.Obj.Header;
 import com.example.practica1_compi1.bknd.Obj.Paragraph;
 import com.example.practica1_compi1.bknd.Obj.TextStyle;
+import com.exampel.practica1_compi1.bknd.Obj.Lista;
 
-//class Parser;
 
 parser code{:
 
@@ -83,3 +83,5 @@ listDecl    ::=  INITLIST:il STRING:st               {: Lista list = new Lista(T
                          |    listDecl:ld NUMBER:n DOT STRING:st   {: ld.addTexto(new Texto(TextStyle.ELEMENT_LIST.ordinal(), st.toString() )); RESULT = ld;:}
                          |    listDecl:ld PLUS STRING:st           {: ld.addTexto(new Texto(TextStyle.ELEMENT_LIST.ordinal(), st.toString() )); RESULT = ld;:}
                          ;
+
+
